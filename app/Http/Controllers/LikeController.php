@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LikeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('JWT');
+    }
+
     public function likeIt(Reply $reply)
     {
         $reply->likes()->create(['user_id' => 1]);
