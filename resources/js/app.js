@@ -9,11 +9,15 @@ require('./bootstrap');
 window.Vue = require('vue');
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import router from './Router/router.js';
 import User from './Helpers/User.js';
+import VueSimplemde from 'vue-simplemde';
+import md from 'marked';
 
 Vue.use(Vuetify);
 window.User = User;
 window.EventBus = new Vue();
+window.md = md;
 
 /**
  * The following block of code may be used to automatically register your
@@ -26,8 +30,8 @@ window.EventBus = new Vue();
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+Vue.component('vue-simplemde', VueSimplemde);
 Vue.component('app-home', require('./components/AppHome.vue').default);
-import router from './Router/router.js';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
