@@ -13,7 +13,7 @@ import User from './Helpers/User.js';
 
 Vue.use(Vuetify);
 window.User = User;
-console.log(User.name());
+window.EventBus = new Vue();
 
 /**
  * The following block of code may be used to automatically register your
