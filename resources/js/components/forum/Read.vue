@@ -1,23 +1,30 @@
 <template>
-  <div>
-      <edit-question :data="data" v-if="editing"></edit-question>
-      <div v-else>
-        <show-question :data="data" v-if="data"></show-question>
-      </div>
+  <div v-if="question">
+    <edit-question :data="question" v-if="editing"></edit-question>
+    <show-question :data="question" v-else></show-question>
+    <v-container>
+      <replies :replies="question.replies"></replies>
+        <new-reply></new-reply>
+    </v-container>
   </div>
 </template>
 <script>
-import EditQuestion from './EditQuestion';
-import ShowQuestion from "./ShowQuestion.vue";
+import EditQuestion from './EditQuestion.vue';
+import ShowQuestion from './ShowQuestion.vue';
+import Replies from '../reply/Replies.vue';
+import NewReply from '../reply/NewReply.vue';
+
 export default {
   components: {
     EditQuestion,
-    ShowQuestion
+    ShowQuestion,
+    Replies,
+    NewReply,
   },
   data() {
     return {
-      data: null,
-      editing: false
+      question: null,
+      editing: false,
     };
   },
   created() {
@@ -26,19 +33,21 @@ export default {
   },
   methods: {
     listen() {
-      EventBus.$on("startEditing", () => {
+      EventBus.$on('startEditing', () => {
         this.editing = true;
       });
-      EventBus.$on("cancelEditing", () => {
+      EventBus.$on('cancelEditing', () => {
         this.editing = false;
       });
     },
     getQuestion() {
       axios
         .get(`/api/question/${this.$route.params.slug}`)
-        .then(res => (this.data = res.data.data))
-        .catch(err => console.log(err.response.data));
-    }
-  }
+        .then((res) => {
+          this.question = res.data.data;
+        })
+        .catch((err) => console.log(err.response.data));
+    },
+  },
 };
 </script>

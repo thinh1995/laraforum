@@ -18,28 +18,28 @@
 </template>
 <script>
 export default {
-  props: ["data"],
+  props: ['data'],
   data() {
     return {
       form: {
         title: null,
-        body: null
-      }
+        body: null,
+      },
     };
   },
   methods: {
     cancel() {
-      EventBus.$emit("cancelEditing");
+      EventBus.$emit('cancelEditing');
     },
     update() {
       axios
         .patch(`/api/question/${this.$route.params.slug}`, this.form)
-        .then(res => this.cancel())
-        .catch(err => console.log(err.response.data));
-    }
+        .then((res) => this.cancel())
+        .catch((err) => console.log(err.response.data));
+    },
   },
   created() {
     this.form = this.data;
-  }
+  },
 };
 </script>

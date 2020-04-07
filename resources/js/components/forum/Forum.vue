@@ -4,25 +4,32 @@
       <v-flex xs8>
         <question v-for="question in questions" :key="question.path" :data="question"></question>
       </v-flex>
-      sidebar
+      <v-flex xs4>
+        <app-sidebar></app-sidebar>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
 <script>
 import Question from './Question.vue';
+import AppSidebar from './AppSidebar.vue';
+
 export default {
+  components: {
+    Question,
+    AppSidebar,
+  },
   data() {
     return {
-      questions: []
-    }
-  },
-  components: {
-    Question
+      questions: [],
+    };
   },
   created() {
     axios.get('/api/question')
-      .then(res => this.questions = res.data.data)
-      .catch(err => console.log(err.response.data));
-  }
-}
+      .then((res) => {
+        this.questions = res.data.data;
+      })
+      .catch((err) => console.log(err.response.data));
+  },
+};
 </script>

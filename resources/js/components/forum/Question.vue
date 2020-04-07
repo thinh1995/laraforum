@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="mt-2">
     <v-list-item three-line>
       <v-list-item-content>
         <v-list-item-title class="headline mb-1">
@@ -20,6 +20,6 @@
 </template>
 <script>
 export default {
-  props: ['data']
-}
+  props: ['data'],
+};
 </script>

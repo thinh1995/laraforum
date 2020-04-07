@@ -2,7 +2,7 @@ class Token {
   isValid(token) {
     const payload = this.payload(token);
     if (payload) {
-      return payload.iss == "http://laraforum.local/api/auth/login" || payload.iss == "http://laraforum.local/api/auth/signup" ? true : false;
+      return (payload.iss === 'http://laraforum.local/api/auth/login' || payload.iss === 'http://laraforum.local/api/auth/signup');
     }
     return false;
   }

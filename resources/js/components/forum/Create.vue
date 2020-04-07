@@ -22,25 +22,31 @@ export default {
       form: {
         title: null,
         category_id: null,
-        body: null
+        body: null,
       },
       categories: [],
-      errors: []
+      errors: [],
     };
   },
   methods: {
     create() {
       axios
-        .post("/api/question", this.form)
-        .then(res => this.$router.push(res.data.path))
-        .catch(err => console.log(err.response.data));
-    }
+        .post('/api/question', this.form)
+        .then((res) => {
+          this.$router.push(res.data.path);
+        })
+        .catch((err) => console.log(err.response.data));
+    },
   },
   created() {
     axios
-      .get("/api/category")
-      .then(res => (this.categories = res.data.data))
-      .catch(err => (this.errors = err.response.data));
-  }
+      .get('/api/category')
+      .then((res) => {
+        this.categories = res.data.data;
+      })
+      .catch((err) => {
+        this.errors = err.response.data;
+      });
+  },
 };
 </script>

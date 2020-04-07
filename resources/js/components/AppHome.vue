@@ -7,14 +7,14 @@
 </template>
 <script>
 import Toolbar from './Toolbar.vue';
-import AppFooter from './AppFooter.vue'
+import AppFooter from './AppFooter.vue';
+
 export default {
-  components: { 
+  components: {
     Toolbar,
-    AppFooter
-  }
-}
+    AppFooter,
+  },
+};
 </script>
 <style>
-  
 </style>
