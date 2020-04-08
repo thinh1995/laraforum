@@ -3,8 +3,8 @@
 Route::apiResource('/question', 'QuestionController');
 Route::apiResource('/category', 'CategoryController');
 Route::apiResource('/question/{question}/reply', 'ReplyController');
-Route::post('/like/{reply}', 'LikeControler@likeIt');
-Route::delete('/like/{reply}', 'LikeControler@unLikeIt');
+Route::post('/like/{reply}', 'LikeController@likeIt');
+Route::delete('/like/{reply}', 'LikeController@unLikeIt');
 
 Route::group([
   'middleware' => 'api',
