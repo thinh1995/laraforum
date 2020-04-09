@@ -4,7 +4,10 @@
     <show-question :data="question" v-else></show-question>
     <v-container>
       <replies :replies="question.replies"></replies>
-        <new-reply></new-reply>
+      <new-reply v-if="loggedIn"></new-reply>
+      <div v-else class="mt-4">
+        <router-link to="/login">Login to reply</router-link>
+      </div>
     </v-container>
   </div>
 </template>
@@ -27,9 +30,10 @@ export default {
       editing: false,
     };
   },
-  created() {
-    this.listen();
-    this.getQuestion();
+  computed: {
+    loggedIn() {
+      return User.loggedIn();
+    },
   },
   methods: {
     listen() {
@@ -48,6 +52,10 @@ export default {
         })
         .catch((err) => console.log(err.response.data));
     },
+  },
+  created() {
+    this.listen();
+    this.getQuestion();
   },
 };
 </script>

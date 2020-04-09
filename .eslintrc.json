@@ -15,7 +15,8 @@
         "AppStorage": true,
         "axios": true,
         "md": true,
-        "Echo": true
+        "Echo": true,
+        "Exception": true
     },
     "parserOptions": {
         "ecmaVersion": 2018,

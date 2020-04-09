@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class NotificationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('JWT');
+    }
+
     public function index()
     {
         return response()->json([

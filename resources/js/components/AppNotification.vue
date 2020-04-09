@@ -8,7 +8,7 @@
     <v-list>
       <v-list-item
         v-for="item in unread"
-        :key="item.id"
+        :key="'unred_' + item.id"
       >
         <router-link :to="item.path">
           <v-list-item-title @click="readIt(item)">{{ item.question }}</v-list-item-title>
@@ -17,9 +17,9 @@
       <v-divider></v-divider>
       <v-list-item
         v-for="item in read"
-        :key="item.id"
+        :key="'read_' + item.id"
       >
-        <v-list-item-title @click="readIt(item)">{{ item.question }}</v-list-item-title>
+        <v-list-item-title>{{ item.question }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -45,7 +45,8 @@ export default {
           this.read = res.data.read;
           this.unread = res.data.unread;
           this.unreadCount = res.data.unread.length;
-        });
+        })
+        .catch((err) => Exception.handle(err));
     },
     readIt(notification) {
       axios.post('/api/notification/markAsRead', { id: notification.id })

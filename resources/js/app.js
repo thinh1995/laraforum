@@ -14,12 +14,14 @@ import VueSimplemde from 'vue-simplemde';
 import md from 'marked';
 import router from './Router/router.js';
 import User from './Helpers/User.js';
+import Exception from './Helpers/Exception.js';
 
 
 Vue.use(Vuetify);
 window.User = User;
 window.EventBus = new Vue();
 window.md = md;
+window.Exception = Exception;
 
 /**
  * The following block of code may be used to automatically register your

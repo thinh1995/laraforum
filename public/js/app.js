@@ -2004,6 +2004,8 @@ __webpack_require__.r(__webpack_exports__);
         _this.read = res.data.read;
         _this.unread = res.data.unread;
         _this.unreadCount = res.data.unread.length;
+      })["catch"](function (err) {
+        return Exception.handle(err);
       });
     },
     readIt: function readIt(notification) {
@@ -2490,6 +2492,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 
@@ -2507,9 +2512,10 @@ __webpack_require__.r(__webpack_exports__);
       editing: false
     };
   },
-  created: function created() {
-    this.listen();
-    this.getQuestion();
+  computed: {
+    loggedIn: function loggedIn() {
+      return User.loggedIn();
+    }
   },
   methods: {
     listen: function listen() {
@@ -2531,6 +2537,10 @@ __webpack_require__.r(__webpack_exports__);
         return console.log(err.response.data);
       });
     }
+  },
+  created: function created() {
+    this.listen();
+    this.getQuestion();
   }
 });
 
@@ -2572,7 +2582,8 @@ __webpack_require__.r(__webpack_exports__);
   props: ['data'],
   data: function data() {
     return {
-      own: User.own(this.data.user_id)
+      own: User.own(this.data.user_id),
+      replyCount: this.data.reply_count
     };
   },
   computed: {
@@ -2594,7 +2605,34 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {
         return console.log(err.response.data);
       });
+    },
+    listen: function listen() {
+      var _this2 = this;
+
+      EventBus.$on('newReply', function () {
+        _this2.replyCount++;
+      });
+      EventBus.$on('deleteReply', function () {
+        _this2.replyCount--;
+      });
+      Echo["private"]("App.User.".concat(User.id())).notification(function (notification) {
+        if (_this2.data.path === notification.path) {
+          _this2.replyCount++;
+        }
+      });
+      Echo.channel('deleteReplyChannel').listen('DeleteReplyEvent', function (e) {
+        var replies = _this2.data.replies;
+
+        for (var index = 0; index < replies.length; index++) {
+          if (replies[index].id === e.id) {
+            _this2.replyCount--;
+          }
+        }
+      });
     }
+  },
+  created: function created() {
+    this.listen();
   }
 });
 
@@ -2884,6 +2922,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (res) {
         _this.body = '';
         EventBus.$emit('newReply', res.data.reply);
+        window.scrollTo(0, 0);
       })["catch"](function (err) {
         return console.log(err.response.data);
       });
@@ -2934,7 +2973,9 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
       Echo["private"]("App.User.".concat(User.id())).notification(function (notification) {
-        _this.content.unshift(notification.reply);
+        if ("/question/".concat(_this.$route.params.slug) === notification.path) {
+          _this.content.unshift(notification.reply);
+        }
       });
       Echo.channel('deleteReplyChannel').listen('DeleteReplyEvent', function (e) {
         for (var index = 0; index < _this.content.length; index++) {
@@ -48082,7 +48123,7 @@ var render = function() {
           _vm._l(_vm.unread, function(item) {
             return _c(
               "v-list-item",
-              { key: item.id },
+              { key: "unred_" + item.id },
               [
                 _c(
                   "router-link",
@@ -48112,20 +48153,8 @@ var render = function() {
           _vm._l(_vm.read, function(item) {
             return _c(
               "v-list-item",
-              { key: item.id },
-              [
-                _c(
-                  "v-list-item-title",
-                  {
-                    on: {
-                      click: function($event) {
-                        return _vm.readIt(item)
-                      }
-                    }
-                  },
-                  [_vm._v(_vm._s(item.question))]
-                )
-              ],
+              { key: "read_" + item.id },
+              [_c("v-list-item-title", [_vm._v(_vm._s(item.question))])],
               1
             )
           })
@@ -48742,7 +48771,18 @@ var render = function() {
             [
               _c("replies", { attrs: { replies: _vm.question.replies } }),
               _vm._v(" "),
-              _c("new-reply")
+              _vm.loggedIn
+                ? _c("new-reply")
+                : _c(
+                    "div",
+                    { staticClass: "mt-4" },
+                    [
+                      _c("router-link", { attrs: { to: "/login" } }, [
+                        _vm._v("Login to reply")
+                      ])
+                    ],
+                    1
+                  )
             ],
             1
           )
@@ -48800,7 +48840,7 @@ var render = function() {
               _c("v-spacer"),
               _vm._v(" "),
               _c("v-btn", { attrs: { color: "teal", dark: "" } }, [
-                _vm._v(_vm._s(_vm.data.reply_count) + " Replies")
+                _vm._v(_vm._s(_vm.replyCount) + " Replies")
               ])
             ],
             1
@@ -106124,6 +106164,52 @@ var AppStorage = /*#__PURE__*/function () {
 
 /***/ }),
 
+/***/ "./resources/js/Helpers/Exception.js":
+/*!*******************************************!*\
+  !*** ./resources/js/Helpers/Exception.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _User_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./User.js */ "./resources/js/Helpers/User.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Exception = /*#__PURE__*/function () {
+  function Exception() {
+    _classCallCheck(this, Exception);
+
+    this.listError = ['Token can not be used, get new one', 'Token is invalid', 'Token is expired'];
+  }
+
+  _createClass(Exception, [{
+    key: "handle",
+    value: function handle(error) {
+      this.isExpired(error.response.data.error);
+    }
+  }, {
+    key: "isExpired",
+    value: function isExpired(error) {
+      if (this.listError.includes(error)) {
+        _User_js__WEBPACK_IMPORTED_MODULE_0__["default"].logout();
+      }
+    }
+  }]);
+
+  return Exception;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Exception = new Exception());
+
+/***/ }),
+
 /***/ "./resources/js/Helpers/Token.js":
 /*!***************************************!*\
   !*** ./resources/js/Helpers/Token.js ***!
@@ -106164,7 +106250,20 @@ var Token = /*#__PURE__*/function () {
   }, {
     key: "decode",
     value: function decode(payload) {
-      return JSON.parse(atob(payload));
+      if (this.isBase64(payload)) {
+        return JSON.parse(atob(payload));
+      }
+
+      return false;
+    }
+  }, {
+    key: "isBase64",
+    value: function isBase64(str) {
+      try {
+        return btoa(atob(str)).replace(/=/g, '') === str;
+      } catch (e) {
+        return false;
+      }
     }
   }]);
 
@@ -106228,7 +106327,7 @@ var User = /*#__PURE__*/function () {
       var storedToken = _AppStorage_js__WEBPACK_IMPORTED_MODULE_1__["default"].getToken();
 
       if (storedToken) {
-        return _Token_js__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken);
+        return _Token_js__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken) ? true : this.logout();
       }
 
       return false;
@@ -106363,6 +106462,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(marked__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _Router_router_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Router/router.js */ "./resources/js/Router/router.js");
 /* harmony import */ var _Helpers_User_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Helpers/User.js */ "./resources/js/Helpers/User.js");
+/* harmony import */ var _Helpers_Exception_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Helpers/Exception.js */ "./resources/js/Helpers/Exception.js");
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -106377,10 +106477,12 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 
 
+
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuetify__WEBPACK_IMPORTED_MODULE_1___default.a);
 window.User = _Helpers_User_js__WEBPACK_IMPORTED_MODULE_5__["default"];
 window.EventBus = new vue__WEBPACK_IMPORTED_MODULE_0___default.a();
 window.md = marked__WEBPACK_IMPORTED_MODULE_3___default.a;
+window.Exception = _Helpers_Exception_js__WEBPACK_IMPORTED_MODULE_6__["default"];
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
