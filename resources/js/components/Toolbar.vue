@@ -1,6 +1,8 @@
 <template>
-  <v-toolbar>
-    <v-toolbar-title>Lucifer</v-toolbar-title>
+  <v-toolbar color="indigo" dark>
+    <v-toolbar-title>
+      <router-link to="/" class="white--text">Lucifer</router-link>
+    </v-toolbar-title>
     <v-spacer></v-spacer>
     <app-notification v-if="loggedIn"></app-notification>
     <div>

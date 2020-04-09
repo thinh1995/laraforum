@@ -2,8 +2,8 @@
   <v-container>
     <v-form @submit.prevent="submit">
       <v-text-field v-model="form.name" label="Name" type="text" required></v-text-field>
-      <v-btn color="pink" type="submit" v-if="editSlug">Update</v-btn>
-      <v-btn color="green" type="submit" v-else>Submit</v-btn>
+      <v-btn color="pink" type="submit" :disabled="disabled" v-if="editSlug">Update</v-btn>
+      <v-btn color="green" type="submit" :disabled="disabled" v-else>Submit</v-btn>
     </v-form>
 
     <v-card>
@@ -44,6 +44,11 @@ export default {
       categories: [],
       editSlug: null,
     };
+  },
+  computed: {
+    disabled() {
+      return !this.form.name;
+    },
   },
   methods: {
     submit() {

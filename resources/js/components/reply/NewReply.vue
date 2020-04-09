@@ -1,7 +1,7 @@
 <template>
   <div class="mt-4">
     <vue-simplemde v-model="body" ref="markdownEditor" />
-    <v-btn color="green" dark @click="submit()">Reply</v-btn>
+    <v-btn color="green" dark @click="submit()" :disabled="disabled">Reply</v-btn>
   </div>
 </template>
 <script>
@@ -10,6 +10,11 @@ export default {
     return {
       body: null,
     };
+  },
+  computed: {
+    disabled() {
+      return !this.body;
+    },
   },
   methods: {
     submit() {

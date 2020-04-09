@@ -31,6 +31,7 @@ export default {
       read: [],
       unread: [],
       unreadCount: 0,
+      sound: 'http://soundbible.com/mp3/glass_ping-Go445-1207030150.mp3',
     };
   },
   computed: {
@@ -56,17 +57,22 @@ export default {
           this.unreadCount--;
         });
     },
+    playSound() {
+      const alert = new Audio(this.sound);
+      alert.play();
+    },
   },
   created() {
     if (User.loggedIn()) {
       this.getNotifications();
-    }
 
-    Echo.private(`App.User.${User.id()}`)
-      .notification((notification) => {
-        this.unread.unshift(notification);
-        this.unreadCount++;
-      });
+      Echo.private(`App.User.${User.id()}`)
+        .notification((notification) => {
+          this.playSound(this.sound);
+          this.unread.unshift(notification);
+          this.unreadCount++;
+        });
+    }
   },
 };
 </script>

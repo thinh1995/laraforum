@@ -11,7 +11,7 @@
         autocomplete
       ></v-select>
       <vue-simplemde v-model="form.body" ref="markdownEditor" />
-      <v-btn color="green" type="sumbit">Create</v-btn>
+      <v-btn color="green" type="sumbit" :disabled="disabled">Create</v-btn>
     </v-form>
   </v-container>
 </template>
@@ -27,6 +27,11 @@ export default {
       categories: [],
       errors: [],
     };
+  },
+  computed: {
+    disabled() {
+      return !(this.form.title && this.form.category_id && this.form.body);
+    },
   },
   methods: {
     create() {

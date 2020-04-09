@@ -2,7 +2,7 @@
   <div>
     <vue-simplemde v-model="body" ref="markdownEditor" />
     <v-card-actions>
-    <v-btn icon small @click="update()">
+    <v-btn icon small @click="update()" :disabled="disabled">
       <v-icon color="orange">mdi-content-save</v-icon>
     </v-btn>
     <v-btn icon small @click="cancel()">
@@ -19,6 +19,11 @@ export default {
       id: this.reply.id,
       body: this.reply.reply,
     };
+  },
+  computed: {
+    disabled() {
+      return !this.body;
+    },
   },
   methods: {
     cancel() {
