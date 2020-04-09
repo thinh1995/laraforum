@@ -18,12 +18,21 @@ class EventServiceProvider extends ServiceProvider
         // Registered::class => [
         //     SendEmailVerificationNotification::class,
         // ],
+
+        'Illuminate\Notifications\Events\NotificationSent' => [
+            'App\Listeners\LogNotification',
+        ],
+
         'App\Events\LikeEvent' => [
             'App\Listeners\LikeEventListener'
         ],
 
         'App\Events\DeleteReplyEvent' => [
             'App\Listeners\DeleteReplyEventListener'
+        ],
+
+        'App\Events\NewReplyEvent' => [
+            'App\Listeners\NewReplyEventListener'
         ],
     ];
 

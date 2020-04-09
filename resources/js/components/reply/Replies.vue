@@ -30,12 +30,12 @@ export default {
           .catch((err) => console.log(err.response.data));
       });
 
-      Echo.private(`App.User.${User.id()}`)
-        .notification((notification) => {
-          if (`/question/${this.$route.params.slug}` === notification.path) {
-            this.content.unshift(notification.reply);
-          }
-        });
+      // Echo.private(`App.User.${User.id()}`)
+      //   .notification((notification) => {
+      //     if (`/question/${this.$route.params.slug}` === notification.path) {
+      //       this.content.unshift(notification.reply);
+      //     }
+      //   });
 
       Echo.channel('deleteReplyChannel')
         .listen('DeleteReplyEvent', (e) => {
@@ -43,6 +43,13 @@ export default {
             if (this.content[index].id === e.id) {
               this.content.splice(index, 1);
             }
+          }
+        });
+
+      Echo.channel('newReplyChannel')
+        .listen('NewReplyEvent', (e) => {
+          if (`/question/${this.$route.params.slug}` === e.path) {
+            this.content.unshift(e.reply);
           }
         });
     },

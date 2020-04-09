@@ -17,6 +17,13 @@ class DeleteReplyEvent implements ShouldBroadcast
     public $id;
 
     /**
+     * The name of the queue on which to place the event.
+     *
+     * @var string
+     */
+    public $broadcastQueue = 'broadcastQueue';
+
+    /**
      * Create a new event instance.
      *
      * @return void

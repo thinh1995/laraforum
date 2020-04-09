@@ -3025,17 +3025,23 @@ __webpack_require__.r(__webpack_exports__);
         })["catch"](function (err) {
           return console.log(err.response.data);
         });
-      });
-      Echo["private"]("App.User.".concat(User.id())).notification(function (notification) {
-        if ("/question/".concat(_this.$route.params.slug) === notification.path) {
-          _this.content.unshift(notification.reply);
-        }
-      });
+      }); // Echo.private(`App.User.${User.id()}`)
+      //   .notification((notification) => {
+      //     if (`/question/${this.$route.params.slug}` === notification.path) {
+      //       this.content.unshift(notification.reply);
+      //     }
+      //   });
+
       Echo.channel('deleteReplyChannel').listen('DeleteReplyEvent', function (e) {
         for (var index = 0; index < _this.content.length; index++) {
           if (_this.content[index].id === e.id) {
             _this.content.splice(index, 1);
           }
+        }
+      });
+      Echo.channel('newReplyChannel').listen('NewReplyEvent', function (e) {
+        if ("/question/".concat(_this.$route.params.slug) === e.path) {
+          _this.content.unshift(e.reply);
         }
       });
     }

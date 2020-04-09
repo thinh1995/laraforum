@@ -2,6 +2,9 @@
 
 namespace App\Events;
 
+use App\Http\Resources\ReplyResource;
+use App\Model\Reply;
+use App\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,30 +13,33 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class LikeEvent implements ShouldBroadcast
+class NewReplyEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $id;
-    public $type;
-
+    public $path;
+    public $user;
+    public $reply;
+    public $notification;
+    
     /**
      * The name of the queue on which to place the event.
      *
      * @var string
      */
     public $broadcastQueue = 'broadcastQueue';
-
-
+    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($id, $type)
+    public function __construct($path, User $user, Reply $reply)
     {
-        $this->id = $id;
-        $this->type = $type;
+        $this->path = $path;
+        $this->user = $user;
+        $this->reply = new ReplyResource($reply);
+        $this->notification = $reply;
     }
 
     /**
@@ -43,6 +49,6 @@ class LikeEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('likeChannel');
+        return new Channel('newReplyChannel');
     }
 }
