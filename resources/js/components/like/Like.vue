@@ -35,5 +35,13 @@ export default {
         .catch((err) => console.log(err));
     },
   },
+  created() {
+    Echo.channel('likeChannel')
+      .listen('LikeEvent', (e) => {
+        if (this.content.id === e.id) {
+          e.type ? this.count++ : this.count--;
+        }
+      });
+  },
 };
 </script>

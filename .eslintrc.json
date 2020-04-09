@@ -14,7 +14,8 @@
         "EventBus": true,
         "AppStorage": true,
         "axios": true,
-        "md": true
+        "md": true,
+        "Echo": true
     },
     "parserOptions": {
         "ecmaVersion": 2018,
