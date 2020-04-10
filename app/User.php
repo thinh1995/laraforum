@@ -68,4 +68,15 @@ class User extends Authenticatable implements JWTSubject
     {
         $this->attributes['password'] = bcrypt($value);
     }
+
+    /**
+     * Route notifications for the Slack channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function routeNotificationForSlack($notification)
+    {
+        return env('SLACK_HOOK');
+    }
 }
